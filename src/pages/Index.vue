@@ -80,8 +80,15 @@ export default {
   },
   methods: {
     getLocation() {
-      this.$q.loading.show(),
-        // console.log("Hello world");
+      this.$q.loading.show();
+      // console.log("Hello world");
+      if (this.$q.platform.is.electron) {
+        this.$axios.get("https://freegeoip.app/json/").then(response => {
+          this.lat = response.data.latitude;
+          this.lon = response.data.longitude;
+          this.getWeatherByCoords();
+        });
+      } else {
         navigator.geolocation.getCurrentPosition(position => {
           // console.log(position);
           this.lat = position.coords.latitude;
@@ -90,6 +97,7 @@ export default {
           this.getWeatherByCoords();
           // this.$q.loading.hide();
         });
+      }
     },
     getWeatherByCoords() {
       this.$q.loading.show(),
